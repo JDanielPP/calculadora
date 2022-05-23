@@ -1,15 +1,23 @@
 import './App.css';
 import React, {useState} from 'react';
 
+
 function App() {
   const [number1, setNumber1] = useState("");
   const [number2, setNumber2] = useState("");
   const [currentOperation, setCurrentOperaton] = useState("");
   const [result, setResult] = useState(0);
 
-  
+  const inicioEstado = JSON.parse(localStorage.getItem("historial")) || [];
+  const [historial, setHistorial] = useState(inicioEstado); // Se inicializa el state con la variable anterior
 
   function allClear(){
+
+    const lista={num1:number1,num2:number2,op:currentOperation,res:result}
+    const nuevoArreglo = [...historial, lista]
+    setHistorial([...nuevoArreglo]);
+    localStorage.setItem("resu", JSON.stringify(nuevoArreglo));
+
     setNumber1("");
     setNumber2("");
     setCurrentOperaton("");
@@ -48,6 +56,7 @@ function App() {
     }
   }
 
+
   const deleteNumber = () => {
     if (currentOperation === " ") {
       setNumber1(number1.toString().slice(0, -1));
@@ -63,6 +72,7 @@ function App() {
          <div className='previous-operand'>{currentOperation ? number1 + currentOperation : ""}</div>
            <div className='current-operand'>{result ? result : (!currentOperation ? number1 : number2) }</div>
        </div>
+
        <button onClick={allClear} className="span-two" >AC</button>
        <button onClick={()  =>  {}}>DEL</button>
        <button onClick={()  =>  {clickOperation("/")}}>/</button>
@@ -82,6 +92,30 @@ function App() {
        <button onClick={()  =>  {clickNumber(0)}}>0</button>
        <button onClick={getResult}className="span-two">=</button>
      </div>
+
+     <div
+            className="row card m-4 p-3 shadow"
+            style={{ width: 400, left: 0 }}
+          >
+            <h3>Historial de operaciones</h3>
+
+            {historial.length === 0 ? (
+              "Vacío"
+            ) : (
+              <ul>
+                {historial.map((item, index) => {
+                  return (
+                    <li className="fs-5">
+                      {item.num1}{item.op}{item.num2} = {item.res} &nbsp;
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+
+
     </div>
   );
 }
